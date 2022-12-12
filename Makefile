@@ -68,7 +68,8 @@ check-black: ## Check Python source code formatting with black
                 install_files \
                 journalist_gui \
                 molecule \
-                admin
+                admin \
+                devops
 	@echo
 
 .PHONY: black
@@ -77,7 +78,8 @@ black: ## Update Python source code formatting with black
                 install_files \
                 journalist_gui \
                 molecule \
-                admin
+                admin \
+                devops
 
 .PHONY: check-isort
 check-isort: ## Check Python import organization with isort
@@ -86,7 +88,8 @@ check-isort: ## Check Python import organization with isort
                 install_files \
                 journalist_gui \
                 molecule \
-                admin
+                admin \
+                devops
 	@echo
 
 .PHONY: isort
@@ -95,7 +98,8 @@ isort: ## Update Python import organization with isort
                 install_files \
                 journalist_gui \
                 molecule \
-                admin
+                admin \
+                devops
 
 .PHONY: ansible-config-lint
 ansible-config-lint: ## Run custom Ansible linting tasks.
@@ -364,13 +368,18 @@ endif
 .PHONY: build-debs
 build-debs: ## Build and test SecureDrop Debian packages (for Focal)
 	@echo "Building SecureDrop Debian packages for Focal..."
-	@$(SDROOT)/devops/scripts/build-debs.sh
+	@$(SDROOT)/devops/packaging/build-debs.sh
+	@echo
+
+build-ossec-debs: ## Build and test SecureDrop Debian packages (for Focal)
+	@echo "Building OSSEC Debian packages for Focal..."
+	@BUILD=ossec $(SDROOT)/devops/packaging/build-debs.sh
 	@echo
 
 .PHONY: build-debs-notest
 build-debs-notest: ## Build SecureDrop Debian packages (for Focal) without running tests.
 	@echo "Building SecureDrop Debian packages for Focal; skipping tests..."
-	@$(SDROOT)/devops/scripts/build-debs.sh notest
+	@NOTEST=1 $(SDROOT)/devops/packaging/build-debs.sh
 	@echo
 
 
@@ -390,12 +399,6 @@ ci-go:  ## Create, provision, test, and destroy GCE host for testing staging env
 ci-teardown:  ## Destroy GCE host for testing staging environment.
 	@echo "███ Destroying GCE host for testing staging environment..."
 	@$(SDROOT)/devops/gce-nested/gce-stop.sh
-	@echo
-
-.PHONY: ci-deb-tests
-ci-deb-tests:  ## Test SecureDrop Debian packages in CI environment.
-	@echo "███ Running Debian package tests in CI..."
-	@$(SDROOT)/devops/scripts/test-built-packages.sh
 	@echo
 
 .PHONY: build-gcloud-docker
